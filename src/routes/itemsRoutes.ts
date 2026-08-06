@@ -28,16 +28,22 @@ router.get(
   (req: CustomRequest, res: Response) => {
     try {
       const userId = req.params.userId;
-
-      if (req.user?.userId === userId) {
-        const userItem = items.filter((t) => t.userId === userId);
-        return res.status(200).json({
-          success: true,
-          data: userItem,
+      if (req.user?.userId !== userId) {
+        return res.status(403).json({
+          success: false,
+          message: "Forbidden access ",
         });
       }
-      return res.status(403).json({
-        ok: false,
+      const userItem = items.filter((t) => t.userId === userId);
+      if (userItem.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: `item for user ID ${userId} not found`,
+        });
+      }
+      return res.status(200).json({
+        success: true,
+        data: userItem,
       });
     } catch (err) {
       return res.status(500).json({
@@ -51,7 +57,7 @@ router.get(
 
 // POST /api/vXXX/items/:userId, body = {new item data}
 // add a new Item for userId
-router.post("/", async (req: Request, res: Response) => {
+router.post("/:userId", async (req: Request, res: Response) => {
   res.status(201).json({
     success: true,
   });

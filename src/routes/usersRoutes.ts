@@ -34,7 +34,7 @@ router.post("/login", (req: Request, res: Response) => {
       {
         //app payload
         username: user.username,
-        userid: user.userId,
+        userId: user.userId,
       },
       jwt_secret,
       { expiresIn: "10m" },
